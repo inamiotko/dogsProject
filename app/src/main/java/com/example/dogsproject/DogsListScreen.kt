@@ -38,8 +38,7 @@ fun DogsListScreen(navController: NavController) {
                         )
                     }
                 }
-
-                items(state) { dog: String ->
+                items(state.sortedBy { it }) { dog: String ->
                     DogListItem(dog = dog, navController)
                 }
             }

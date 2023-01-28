@@ -29,10 +29,10 @@ class SaveFavDogs(private val context: Context) {
         }
     }
 
-    fun saveToSharedPrefs(data: List<String>, scope: CoroutineScope, dataStore: SaveFavDogs) {
+    fun saveToSharedPrefs(data: List<String>, scope: CoroutineScope) {
         val toBeSaved = Gson().toJson(data)
         scope.launch {
-            dataStore.saveDogs(toBeSaved)
+            saveDogs(toBeSaved)
         }
     }
 }

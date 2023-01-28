@@ -3,6 +3,7 @@ package com.example.dogsproject
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
@@ -23,6 +24,7 @@ fun DogsFavouritesScreen() {
     val ctx = LocalContext.current
     val breedNamesList = mutableListOf<String>()
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
+    var filterOn by remember { mutableStateOf(false) }
     var filteredImgList by remember { mutableStateOf(listOf<String>()) }
     var filteredNamesList by remember { mutableStateOf(listOf<String>()) }
     var breedRemembered by remember { mutableStateOf("") }
@@ -30,6 +32,7 @@ fun DogsFavouritesScreen() {
     val scope = rememberCoroutineScope()
     val dataStore = SaveFavDogs(ctx)
     Column {
+        filterOn = false
         val dogs = dataStore.getDogs.collectAsState(initial = "").value
         TopBar("Favourite dogs", Modifier, iconAction = {
             IconButton(onClick = {}) {
@@ -59,6 +62,7 @@ fun DogsFavouritesScreen() {
                     DropdownMenuItem(
                         { Text(text = breed) },
                         onClick = {
+                            filterOn = true
                             dropDownMenuExpanded = false
                             breedRemembered =
                                 if (breed.contains(" ")) breed.replace(" ", "-") else breed
@@ -83,10 +87,15 @@ fun DogsFavouritesScreen() {
                     " "
                 )
             )
-            filteredImgList = favouriteDogBreedsList
-            filteredNamesList = breedNamesList
+            if (!filterOn && filteredImgList.isEmpty()) {
+                filteredImgList = favouriteDogBreedsList
+                filteredNamesList = breedNamesList
+            }
         } else {
-            Text("You need to pick some favourites first :)")
+            Text(
+                "You need to pick some favourites first :)",
+                Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
+            )
         }
         LazyVerticalGrid(columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(horizontal = 5.dp, vertical = 16.dp),
@@ -98,8 +107,16 @@ fun DogsFavouritesScreen() {
                         onItemClickAction = {
                             Toast.makeText(ctx, "Image removed from favourites", Toast.LENGTH_SHORT)
                                 .show()
+                            favouriteDogBreedsList =
+                                favouriteDogBreedsList - favouriteDogBreedsList[favouriteDogBreedsList.indexOf(
+                                    filteredImgList[num]
+                                )]
                             filteredImgList = filteredImgList - filteredImgList[num]
-                            dataStore.saveToSharedPrefs(filteredImgList.reversed(), scope, dataStore)
+                            filteredNamesList = filteredNamesList - filteredNamesList[num]
+                            dataStore.saveToSharedPrefs(
+                                favouriteDogBreedsList.reversed(),
+                                scope
+                            )
                         })
                 }
 

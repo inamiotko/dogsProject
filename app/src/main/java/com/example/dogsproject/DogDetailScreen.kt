@@ -57,7 +57,7 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                         if (!dogsFav.contains(state[num]))
                             dogsFav = dogsFav + state[num]
                         if (dogs == "") {
-                            dataStore.saveToSharedPrefs(dogsFav, scope, dataStore)
+                            dataStore.saveToSharedPrefs(dogsFav, scope)
                         } else {
                             var favouriteDogBreedsList = Gson().fromJson<List<String>?>(
                                 dogs,
@@ -66,7 +66,7 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                             for (favBreed in dogsFav)
                                 if (!favouriteDogBreedsList.contains(favBreed))
                                     favouriteDogBreedsList = favouriteDogBreedsList + favBreed
-                            dataStore.saveToSharedPrefs(favouriteDogBreedsList, scope, dataStore)
+                            dataStore.saveToSharedPrefs(favouriteDogBreedsList, scope)
                         }
                     }
                 }
@@ -80,7 +80,6 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                 }
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             navController = navController,
-            dogsFav
         )
     }
 }

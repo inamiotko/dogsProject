@@ -24,25 +24,9 @@ import com.google.gson.reflect.TypeToken
 fun FavouriteFloatingButton(
     modifier: Modifier,
     navController: NavController,
-    favBreeds: List<String> = emptyList()
 ) {
-    val ctx = LocalContext.current
     FloatingActionButton(
         onClick = {
-//            val sharedPref = ctx.getSharedPreferences("test", Context.MODE_PRIVATE)
-//            val dogsList = sharedPref.getString("favDogBreeds", "")?: mutableListOf<String>("").toString()
-//
-//            var alreadySaved = Gson().fromJson<List<String>?>(
-//                dogsList,
-//                object : TypeToken<List<String>>() {}.type
-//            )
-//            for (breed in favBreeds) if (!alreadySaved.isNullOrEmpty() && !alreadySaved.contains(breed))
-//                alreadySaved = alreadySaved + breed
-//            val toBeSaved = Gson().toJson(alreadySaved)
-//            with(sharedPref.edit()) {
-//                putString("favDogBreeds", toBeSaved)
-//                apply()
-//            }
             navController.navigate(Screen.DogsFavouritesScreen.route)
         },
         shape = CircleShape,

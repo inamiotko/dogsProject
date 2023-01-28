@@ -1,6 +1,5 @@
 package com.example.dogsproject
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,16 +28,12 @@ import kotlinx.coroutines.launch
 fun DogDetailScreen(navController: NavController, breed: String) {
     var dogsFav by remember { mutableStateOf(listOf<String>()) }
     val ctx = LocalContext.current
-    val sharedPref = ctx.getSharedPreferences("dogs", Context.MODE_PRIVATE)
     val viewModel: DogDetailsViewModel = viewModel()
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val dataStore = SaveFavDogs(ctx)
-
-    // we instantiate the saveEmail class
     Column {
         val dogs = dataStore.getDogs.collectAsState(initial = "").value
-
         TopBar(breed, Modifier)
         Box {
             LazyVerticalGrid(

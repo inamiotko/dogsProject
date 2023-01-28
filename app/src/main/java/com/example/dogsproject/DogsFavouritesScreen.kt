@@ -1,6 +1,5 @@
 package com.example.dogsproject
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -22,7 +21,6 @@ import com.google.gson.reflect.TypeToken
 fun DogsFavouritesScreen() {
     val ctx = LocalContext.current
     val breedNamesList = mutableListOf<String>()
-    val sharedPref = ctx.getSharedPreferences("dogs", Context.MODE_PRIVATE)
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
     var filteredImgList by remember { mutableStateOf(listOf<String>()) }
     var filteredNamesList by remember { mutableStateOf(listOf<String>()) }
@@ -32,7 +30,7 @@ fun DogsFavouritesScreen() {
     Column {
         val dogs = dataStore.getDogs.collectAsState(initial = "").value
 
-        if (dogs != ""){
+        if (dogs != "") {
             favouriteDogBreedsList =
                 Gson().fromJson<List<String>?>(
                     dogs,

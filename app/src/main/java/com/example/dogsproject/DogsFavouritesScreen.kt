@@ -29,24 +29,6 @@ fun DogsFavouritesScreen() {
     val dataStore = SaveFavDogs(ctx)
     Column {
         val dogs = dataStore.getDogs.collectAsState(initial = "").value
-
-        if (dogs != "") {
-            favouriteDogBreedsList =
-                Gson().fromJson<List<String>?>(
-                    dogs,
-                    object : TypeToken<List<String>>() {}.type
-                )
-                    .reversed()
-            for (element in favouriteDogBreedsList) breedNamesList.add(
-                element.split("/")[4].replace(
-                    "-",
-                    " "
-                )
-            )
-
-            filteredImgList = favouriteDogBreedsList
-            filteredNamesList = breedNamesList
-        }
         TopBar("Favourite dogs", Modifier, iconAction = {
             IconButton(onClick = {}) {
                 Icon(Icons.Filled.Favorite, "")
@@ -85,6 +67,25 @@ fun DogsFavouritesScreen() {
                         })
                 }
             }
+        }
+        if (dogs != "") {
+            favouriteDogBreedsList =
+                Gson().fromJson<List<String>?>(
+                    dogs,
+                    object : TypeToken<List<String>>() {}.type
+                )
+                    .reversed()
+            for (element in favouriteDogBreedsList) breedNamesList.add(
+                element.split("/")[4].replace(
+                    "-",
+                    " "
+                )
+            )
+
+            filteredImgList = favouriteDogBreedsList
+            filteredNamesList = breedNamesList
+        } else {
+            Text("You need to pick some favourites first :)")
         }
         LazyVerticalGrid(columns = GridCells.Fixed(3),
             contentPadding = PaddingValues(horizontal = 5.dp, vertical = 16.dp),

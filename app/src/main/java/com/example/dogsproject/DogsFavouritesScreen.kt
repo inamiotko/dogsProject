@@ -1,5 +1,6 @@
 package com.example.dogsproject
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,6 +27,7 @@ fun DogsFavouritesScreen() {
     var filteredNamesList by remember { mutableStateOf(listOf<String>()) }
     var breedRemembered by remember { mutableStateOf("") }
     lateinit var favouriteDogBreedsList: List<String>
+    val scope = rememberCoroutineScope()
     val dataStore = SaveFavDogs(ctx)
     Column {
         val dogs = dataStore.getDogs.collectAsState(initial = "").value
@@ -81,7 +83,6 @@ fun DogsFavouritesScreen() {
                     " "
                 )
             )
-
             filteredImgList = favouriteDogBreedsList
             filteredNamesList = breedNamesList
         } else {
@@ -94,7 +95,12 @@ fun DogsFavouritesScreen() {
                     GridItem(
                         breed = filteredNamesList[num],
                         img = filteredImgList[num],
-                        onItemClickAction = {})
+                        onItemClickAction = {
+                            Toast.makeText(ctx, "Image removed from favourites", Toast.LENGTH_SHORT)
+                                .show()
+                            filteredImgList = filteredImgList - filteredImgList[num]
+                            dataStore.saveToSharedPrefs(filteredImgList.reversed(), scope, dataStore)
+                        })
                 }
 
             })

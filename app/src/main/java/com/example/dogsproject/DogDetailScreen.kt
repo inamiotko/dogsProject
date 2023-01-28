@@ -1,10 +1,7 @@
 package com.example.dogsproject
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.*
@@ -12,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dogsproject.viewcomponents.FavouriteFloatingButton
@@ -32,10 +30,19 @@ fun DogDetailScreen(navController: NavController, breed: String) {
     val state by viewModel.state.collectAsState()
     val scope = rememberCoroutineScope()
     val dataStore = SaveFavDogs(ctx)
-    Column {
-        val dogs = dataStore.getDogs.collectAsState(initial = "").value
-        TopBar(breed, Modifier)
-        Box {
+    val dogs = dataStore.getDogs.collectAsState(initial = "").value
+    ConstraintLayout(Modifier.fillMaxHeight()) {
+        val (box, floatingButton, topBar) = createRefs()
+        TopBar(breed, Modifier.constrainAs(topBar){
+           start.linkTo(parent.start)
+           end.linkTo(parent.end)
+           top.linkTo(parent.top)
+        })
+        Box(Modifier.constrainAs(box){
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(topBar.bottom)
+        }) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 contentPadding = PaddingValues(horizontal = 5.dp, vertical = 16.dp)
@@ -50,7 +57,7 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                         if (!dogsFav.contains(state[num]))
                             dogsFav = dogsFav + state[num]
                         if (dogs == "") {
-                            saveToSharedPrefs(dogsFav, scope, dataStore)
+                            dataStore.saveToSharedPrefs(dogsFav, scope, dataStore)
                         } else {
                             var favouriteDogBreedsList = Gson().fromJson<List<String>?>(
                                 dogs,
@@ -59,27 +66,22 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                             for (favBreed in dogsFav)
                                 if (!favouriteDogBreedsList.contains(favBreed))
                                     favouriteDogBreedsList = favouriteDogBreedsList + favBreed
-                            saveToSharedPrefs(favouriteDogBreedsList, scope, dataStore)
+                            dataStore.saveToSharedPrefs(favouriteDogBreedsList, scope, dataStore)
                         }
                     }
                 }
             }
-            FavouriteFloatingButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-                navController = navController,
-                dogsFav
-            )
         }
-    }
-}
-
-
-fun saveToSharedPrefs(data: List<String>, scope: CoroutineScope, dataStore: SaveFavDogs) {
-    val toBeSaved = Gson().toJson(data)
-    scope.launch {
-        dataStore.saveDogs(toBeSaved)
+        FavouriteFloatingButton(
+            modifier = Modifier
+                .constrainAs(floatingButton){
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(parent.end)
+                }
+                .padding(horizontal = 24.dp, vertical = 16.dp),
+            navController = navController,
+            dogsFav
+        )
     }
 }
 

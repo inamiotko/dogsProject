@@ -1,6 +1,5 @@
-package com.example.dogsproject
+package com.example.dogsproject.viewcomponents
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,12 +18,14 @@ import com.example.dogsproject.navigation.Screen
 
 @Composable
 fun DogListItem(dog: String, navController: NavController) {
-    Card(elevation = CardDefaults.cardElevation(
-        defaultElevation = 10.dp),
+    Card(
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 10.dp
+        ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(15.dp)
-            .clickable{ navController.navigate(Screen.DogsDetailScreen.route.plus("/${dog}"))},
+            .clickable { navController.navigate(Screen.DogsDetailScreen.route.plus("/${dog}")) },
     ) {
         Row {
             Column(

@@ -1,25 +1,26 @@
-package com.example.dogsproject
+package com.example.dogsproject.screens
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.dogsproject.SaveFavDogs
 import com.example.dogsproject.viewcomponents.FavouriteFloatingButton
 import com.example.dogsproject.viewcomponents.GridItem
 import com.example.dogsproject.viewcomponents.TopBar
 import com.example.dogsproject.viewmodel.DogDetailsViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -33,12 +34,12 @@ fun DogDetailScreen(navController: NavController, breed: String) {
     val dogs = dataStore.getDogs.collectAsState(initial = "").value
     ConstraintLayout(Modifier.fillMaxHeight()) {
         val (box, floatingButton, topBar) = createRefs()
-        TopBar(breed, Modifier.constrainAs(topBar){
-           start.linkTo(parent.start)
-           end.linkTo(parent.end)
-           top.linkTo(parent.top)
+        TopBar(breed, Modifier.constrainAs(topBar) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(parent.top)
         })
-        Box(Modifier.constrainAs(box){
+        Box(Modifier.constrainAs(box) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(topBar.bottom)
@@ -74,7 +75,7 @@ fun DogDetailScreen(navController: NavController, breed: String) {
         }
         FavouriteFloatingButton(
             modifier = Modifier
-                .constrainAs(floatingButton){
+                .constrainAs(floatingButton) {
                     bottom.linkTo(parent.bottom)
                     end.linkTo(parent.end)
                 }

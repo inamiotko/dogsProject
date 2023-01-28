@@ -1,4 +1,4 @@
-package com.example.dogsproject
+package com.example.dogsproject.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.dogsproject.viewcomponents.DogListItem
 import com.example.dogsproject.viewcomponents.FavouriteFloatingButton
 import com.example.dogsproject.viewcomponents.TopBar
 import com.example.dogsproject.viewmodel.DogListViewModel

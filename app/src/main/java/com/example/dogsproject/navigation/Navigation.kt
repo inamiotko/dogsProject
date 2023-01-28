@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.dogsproject.DogDetailScreen
-import com.example.dogsproject.DogsFavouritesScreen
-import com.example.dogsproject.DogsListScreen
+import com.example.dogsproject.screens.DogDetailScreen
+import com.example.dogsproject.screens.DogsFavouritesScreen
+import com.example.dogsproject.screens.DogsListScreen
 
 @Composable
 fun Navigation(navController: NavHostController) {

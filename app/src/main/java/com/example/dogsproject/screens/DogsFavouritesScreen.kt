@@ -1,4 +1,4 @@
-package com.example.dogsproject
+package com.example.dogsproject.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.dogsproject.R
+import com.example.dogsproject.SaveFavDogs
 import com.example.dogsproject.viewcomponents.GridItem
 import com.example.dogsproject.viewcomponents.TopBar
 import com.google.gson.Gson
@@ -28,7 +30,7 @@ fun DogsFavouritesScreen() {
     var filteredImgList by remember { mutableStateOf(listOf<String>()) }
     var filteredNamesList by remember { mutableStateOf(listOf<String>()) }
     var breedRemembered by remember { mutableStateOf("") }
-    lateinit var favouriteDogBreedsList: List<String>
+    var favouriteDogBreedsList: List<String> = mutableListOf()
     val scope = rememberCoroutineScope()
     val dataStore = SaveFavDogs(ctx)
     Column {
@@ -62,7 +64,7 @@ fun DogsFavouritesScreen() {
                     DropdownMenuItem(
                         { Text(text = breed) },
                         onClick = {
-                            filterOn = true
+                            filterOn = !filterOn
                             dropDownMenuExpanded = false
                             breedRemembered =
                                 if (breed.contains(" ")) breed.replace(" ", "-") else breed
@@ -107,6 +109,7 @@ fun DogsFavouritesScreen() {
                         onItemClickAction = {
                             Toast.makeText(ctx, "Image removed from favourites", Toast.LENGTH_SHORT)
                                 .show()
+                            filterOn = false
                             favouriteDogBreedsList =
                                 favouriteDogBreedsList - favouriteDogBreedsList[favouriteDogBreedsList.indexOf(
                                     filteredImgList[num]

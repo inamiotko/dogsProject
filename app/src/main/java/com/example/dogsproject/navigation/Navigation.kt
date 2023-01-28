@@ -1,0 +1,24 @@
+package com.example.dogsproject.navigation
+
+import androidx.compose.runtime.Composable
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.example.dogsproject.DogDetailScreen
+import com.example.dogsproject.DogsFavouritesScreen
+import com.example.dogsproject.DogsListScreen
+
+@Composable
+fun Navigation(navController: NavHostController) {
+    NavHost(navController = navController, startDestination = Screen.DogsListScreen.route) {
+        composable(route = Screen.DogsListScreen.route) {
+            DogsListScreen(navController)
+        }
+        composable(route = Screen.DogsDetailScreen.route.plus("/{breed}")) { backStackEntry ->
+            backStackEntry.arguments?.getString("breed")?.let { DogDetailScreen(navController, it) }
+        }
+        composable(route = Screen.DogsFavouritesScreen.route) {
+            DogsFavouritesScreen()
+        }
+    }
+}

@@ -23,7 +23,7 @@ import com.example.dogsproject.viewmodel.DogListViewModel
 @Composable
 fun DogsListScreen(navController: NavController) {
     val viewModel: DogListViewModel = viewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.dogStateFlow.collectAsState()
     Column {
         TopBar("List of dog breeds", Modifier)
         Box(modifier = Modifier.fillMaxSize()) {

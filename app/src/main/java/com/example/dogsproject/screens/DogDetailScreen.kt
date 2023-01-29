@@ -28,7 +28,7 @@ fun DogDetailScreen(navController: NavController, breed: String) {
     var dogsFav by remember { mutableStateOf(listOf<String>()) }
     val ctx = LocalContext.current
     val viewModel: DogDetailsViewModel = viewModel()
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.dogStateFlow.collectAsState()
     val scope = rememberCoroutineScope()
     val dataStore = SaveFavDogs(ctx)
     val dogs = dataStore.getDogs.collectAsState(initial = "").value

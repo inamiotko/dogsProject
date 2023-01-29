@@ -17,9 +17,9 @@ class DogDetailsViewModel(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(emptyList<String>())
-    val state: StateFlow<List<String>>
-        get() = _state
+    private val _dogStateFlow = MutableStateFlow(emptyList<String>())
+    val dogStateFlow: StateFlow<List<String>>
+        get() = _dogStateFlow
     var dogBreeds: List<String> = mutableListOf()
     private var dog = savedStateHandle.get<String>("breed") ?: ""
 
@@ -33,7 +33,7 @@ class DogDetailsViewModel(
                 ) {
                     if (response.isSuccessful) {
                         dogBreeds = response.body()?.dogImages ?: emptyList<String>()
-                        _state.value = dogBreeds
+                        _dogStateFlow.value = dogBreeds
                     }
                 }
 

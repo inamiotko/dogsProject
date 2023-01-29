@@ -14,10 +14,9 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class DogListViewModel : ViewModel() {
-
-    private val _state = MutableStateFlow(emptyList<String>())
-    val state: StateFlow<List<String>>
-        get() = _state
+    private val _dogStateFlow = MutableStateFlow(emptyList<String>())
+    val dogStateFlow: StateFlow<List<String>>
+        get() = _dogStateFlow
     val dogBreeds: MutableList<String> = mutableListOf()
 
     init {
@@ -36,7 +35,7 @@ class DogListViewModel : ViewModel() {
                                 k.let { dogBreeds.add(k) }
                             }
                         }
-                        _state.value = dogBreeds
+                        _dogStateFlow.value = dogBreeds
                     }
                 }
 

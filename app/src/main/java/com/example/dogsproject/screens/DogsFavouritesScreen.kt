@@ -106,6 +106,7 @@ fun DogsFavouritesScreen() {
                     GridItem(
                         breed = filteredNamesList[num],
                         img = filteredImgList[num],
+                        iconVisible = false,
                         onItemClickAction = {
                             Toast.makeText(ctx, "Image removed from favourites", Toast.LENGTH_SHORT)
                                 .show()

@@ -26,6 +26,7 @@ import com.google.gson.reflect.TypeToken
 @Composable
 fun DogDetailScreen(navController: NavController, breed: String) {
     var dogsFav by remember { mutableStateOf(listOf<String>()) }
+    var fillFavIcon by remember { mutableStateOf(false) }
     val ctx = LocalContext.current
     val viewModel: DogDetailsViewModel = viewModel()
     val state by viewModel.dogStateFlow.collectAsState()
@@ -51,8 +52,9 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                 items(state.size) { num ->
                     GridItem(
                         breed = "",
-                        img = state[num]
-                    ) {
+                        img = state[num],
+                        iconVisible = true,
+                        onItemClickAction = {
                         Toast.makeText(ctx, "Image saved to favourites", Toast.LENGTH_SHORT)
                             .show()
                         if (!dogsFav.contains(state[num]))
@@ -67,9 +69,10 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                             for (favBreed in dogsFav)
                                 if (!favouriteDogBreedsList.contains(favBreed))
                                     favouriteDogBreedsList = favouriteDogBreedsList + favBreed
+                                else fillFavIcon = !fillFavIcon
                             dataStore.saveToSharedPrefs(favouriteDogBreedsList, scope)
                         }
-                    }
+                    })
                 }
             }
         }

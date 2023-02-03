@@ -53,8 +53,8 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                     GridItem(
                         breed = "",
                         img = state[num],
-                        iconVisible = true,
-                        onItemClickAction = {
+                        iconVisible = true
+                    ) {
                         Toast.makeText(ctx, "Image saved to favourites", Toast.LENGTH_SHORT)
                             .show()
                         if (!dogsFav.contains(state[num]))
@@ -72,7 +72,7 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                                 else fillFavIcon = !fillFavIcon
                             dataStore.saveToSharedPrefs(favouriteDogBreedsList, scope)
                         }
-                    })
+                    }
                 }
             }
         }

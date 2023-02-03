@@ -15,6 +15,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.dogsproject.R
 import com.example.dogsproject.SaveFavDogs
+import com.example.dogsproject.additional.replaceDashWithSpace
+import com.example.dogsproject.additional.replaceSpaceWithDash
+import com.example.dogsproject.additional.splitToGetBreed
 import com.example.dogsproject.viewcomponents.GridItem
 import com.example.dogsproject.viewcomponents.TopBar
 import com.google.gson.Gson
@@ -32,7 +35,6 @@ fun DogsFavouritesScreen() {
     var filteredNamesList by remember { mutableStateOf(listOf<String>()) }
     var breedRemembered by remember { mutableStateOf("") }
     var snackBarVisible by remember { mutableStateOf(false) }
-    var hideSnackBar by remember { mutableStateOf(true) }
     var favouriteDogBreedsList: List<String> = mutableListOf()
     val scope = rememberCoroutineScope()
     val dataStore = SaveFavDogs(ctx)
@@ -68,9 +70,9 @@ fun DogsFavouritesScreen() {
                         filterOn = !filterOn
                         dropDownMenuExpanded = false
                         breedRemembered =
-                            if (breed.contains(" ")) breed.replace(" ", "-") else breed
+                            if (breed.contains(" ")) breed.replaceSpaceWithDash() else breed
                         filteredImgList = favouriteDogBreedsList.filter {
-                            it.split("/")[4] == breedRemembered
+                            it.splitToGetBreed() == breedRemembered
                         }
                         filteredNamesList = breedNamesList.filter { it == breed }
                     })
@@ -82,9 +84,7 @@ fun DogsFavouritesScreen() {
                 dogs, object : TypeToken<List<String>>() {}.type
             ).reversed()
             for (element in favouriteDogBreedsList) breedNamesList.add(
-                element.split("/")[4].replace(
-                    "-", " "
-                )
+                element.splitToGetBreed().replaceDashWithSpace()
             )
             if (!filterOn && filteredImgList.isEmpty()) {
                 filteredImgList = favouriteDogBreedsList

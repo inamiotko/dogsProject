@@ -3,6 +3,7 @@ package com.example.dogsproject.viewmodel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.dogsproject.additional.splitToGetBreedName
 import com.example.dogsproject.data.ResponseGetter
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,7 @@ class DogDetailsViewModel(
 
     init {
         viewModelScope.launch {
-            if (dog.contains(" ")) dog = dog.split(" ")[0]
+            if (dog.contains(" ")) dog = dog.splitToGetBreedName()
             response.getDogImages(dog, _dogStateFlow)
         }
     }

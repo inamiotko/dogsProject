@@ -38,9 +38,10 @@ fun DogsListScreen(navController: NavController) {
                                 .wrapContentSize(align = Alignment.Center)
                         )
                     }
-                }
-                items(state.sortedBy { it }) { dog: String ->
-                    DogListItem(dog = dog, navController)
+                } else {
+                    items(state.sortedBy { it }) { dog: String ->
+                        DogListItem(dog = dog, navController)
+                    }
                 }
             }
             FavouriteFloatingButton(

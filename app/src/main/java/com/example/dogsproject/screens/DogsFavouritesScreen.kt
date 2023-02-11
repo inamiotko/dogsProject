@@ -15,13 +15,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.dogsproject.R
 import com.example.dogsproject.SaveFavDogs
+import com.example.dogsproject.additional.intoListOfString
 import com.example.dogsproject.additional.replaceDashWithSpace
 import com.example.dogsproject.additional.replaceSpaceWithDash
 import com.example.dogsproject.additional.splitToGetBreed
 import com.example.dogsproject.viewcomponents.GridItem
 import com.example.dogsproject.viewcomponents.TopBar
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,9 +79,7 @@ fun DogsFavouritesScreen() {
             }
         }
         if (dogs != "") {
-            favouriteDogBreedsList = Gson().fromJson<List<String>?>(
-                dogs, object : TypeToken<List<String>>() {}.type
-            ).reversed()
+            favouriteDogBreedsList = dogs.intoListOfString().reversed()
             for (element in favouriteDogBreedsList) breedNamesList.add(
                 element.splitToGetBreed().replaceDashWithSpace()
             )

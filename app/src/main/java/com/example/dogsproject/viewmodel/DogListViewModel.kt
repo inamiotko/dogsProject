@@ -13,6 +13,7 @@ class DogListViewModel : ViewModel() {
         get() = _dogStateFlow
     private val dogBreeds: MutableList<String> = mutableListOf()
     private val response = ResponseGetter()
+
     init {
         viewModelScope.launch {
             response.getDogBreeds(dogBreeds, _dogStateFlow)

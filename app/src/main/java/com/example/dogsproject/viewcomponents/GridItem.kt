@@ -36,6 +36,7 @@ fun GridItem(
                 interactionSource = MutableInteractionSource(),
                 indication = rememberRipple(bounded = true, color = Color.Transparent),
                 onClick = {
+                    isFavourite = !isFavourite
                     onItemClickAction(img)
                 }
             )

@@ -9,7 +9,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ResponseGetter() {
+class ResponseGetter {
     fun getDogBreeds(
         dogBreeds: MutableList<String>,
         _dogStateFlow: MutableStateFlow<List<String>>

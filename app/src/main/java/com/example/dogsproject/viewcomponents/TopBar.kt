@@ -7,7 +7,12 @@ import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(title: String, modifier: Modifier, iconAction: @Composable () -> Unit = {}, actions: @Composable (RowScope.() -> Unit) = {} ) {
+fun TopBar(
+    title: String,
+    modifier: Modifier,
+    iconAction: @Composable () -> Unit = {},
+    actions: @Composable (RowScope.() -> Unit) = {}
+) {
     TopAppBar(
         title = { Text(text = title) },
         modifier = modifier,

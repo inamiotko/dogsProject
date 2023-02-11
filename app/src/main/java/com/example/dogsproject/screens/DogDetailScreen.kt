@@ -15,18 +15,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dogsproject.SaveFavDogs
+import com.example.dogsproject.additional.intoListOfString
 import com.example.dogsproject.viewcomponents.FavouriteFloatingButton
 import com.example.dogsproject.viewcomponents.GridItem
 import com.example.dogsproject.viewcomponents.TopBar
 import com.example.dogsproject.viewmodel.DogDetailsViewModel
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 
 @Composable
 fun DogDetailScreen(navController: NavController, breed: String) {
     var dogsFav by remember { mutableStateOf(listOf<String>()) }
-    var fillFavIcon by remember { mutableStateOf(false) }
     val ctx = LocalContext.current
     val viewModel: DogDetailsViewModel = viewModel()
     val state by viewModel.dogStateFlow.collectAsState()
@@ -55,21 +53,32 @@ fun DogDetailScreen(navController: NavController, breed: String) {
                         img = state[num],
                         iconVisible = true
                     ) {
-                        Toast.makeText(ctx, "Image saved to favourites", Toast.LENGTH_SHORT)
-                            .show()
                         if (!dogsFav.contains(state[num]))
                             dogsFav = dogsFav + state[num]
                         if (dogs == "") {
                             dataStore.saveToSharedPrefs(dogsFav, scope)
                         } else {
-                            var favouriteDogBreedsList = Gson().fromJson<List<String>?>(
-                                dogs,
-                                object : TypeToken<List<String>>() {}.type
-                            )
-                            for (favBreed in dogsFav)
-                                if (!favouriteDogBreedsList.contains(favBreed))
+
+                            var favouriteDogBreedsList = dogs.intoListOfString()
+                            for (favBreed in dogsFav) {
+                                if (!favouriteDogBreedsList.contains(favBreed)) {
                                     favouriteDogBreedsList = favouriteDogBreedsList + favBreed
-                                else fillFavIcon = !fillFavIcon
+                                    Toast.makeText(
+                                        ctx,
+                                        "Image saved to favourites",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                } else {
+                                    favouriteDogBreedsList = favouriteDogBreedsList - favBreed
+                                    Toast.makeText(
+                                        ctx,
+                                        "Image removed from favourites",
+                                        Toast.LENGTH_SHORT
+                                    )
+                                        .show()
+                                }
+                            }
                             dataStore.saveToSharedPrefs(favouriteDogBreedsList, scope)
                         }
                     }
@@ -87,5 +96,6 @@ fun DogDetailScreen(navController: NavController, breed: String) {
         )
     }
 }
+
 
 

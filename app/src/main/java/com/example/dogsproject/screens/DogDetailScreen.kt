@@ -7,7 +7,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -31,6 +37,7 @@ fun DogDetailScreen(navController: NavController, breed: String) {
     val scope = rememberCoroutineScope()
     val dataStore = SaveFavDogs(ctx)
     val dogs = dataStore.getDogs.collectAsState(initial = "").value
+    var favouriteDogBreedsList: List<String> = dogs.intoListOfString()
     ConstraintLayout(Modifier.fillMaxHeight()) {
         val (box, floatingButton, topBar) = createRefs()
         TopBar(breed, Modifier.constrainAs(topBar) {
@@ -49,38 +56,20 @@ fun DogDetailScreen(navController: NavController, breed: String) {
             ) {
                 items(state.size) { num ->
                     GridItem(
-                        breed = "",
-                        img = state[num],
-                        iconVisible = true
+                        breed = "", img = state[num], iconVisible = true
                     ) {
-                        if (!dogsFav.contains(state[num]))
-                            dogsFav = dogsFav + state[num]
-                        if (dogs == "") {
-                            dataStore.saveToSharedPrefs(dogsFav, scope)
+                        if (!favouriteDogBreedsList.contains(state[num])) {
+                            favouriteDogBreedsList = favouriteDogBreedsList + state[num]
+                            Toast.makeText(
+                                ctx, "Image saved to favourites", Toast.LENGTH_SHORT
+                            ).show()
                         } else {
-
-                            var favouriteDogBreedsList = dogs.intoListOfString()
-                            for (favBreed in dogsFav) {
-                                if (!favouriteDogBreedsList.contains(favBreed)) {
-                                    favouriteDogBreedsList = favouriteDogBreedsList + favBreed
-                                    Toast.makeText(
-                                        ctx,
-                                        "Image saved to favourites",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                } else {
-                                    favouriteDogBreedsList = favouriteDogBreedsList - favBreed
-                                    Toast.makeText(
-                                        ctx,
-                                        "Image removed from favourites",
-                                        Toast.LENGTH_SHORT
-                                    )
-                                        .show()
-                                }
-                            }
-                            dataStore.saveToSharedPrefs(favouriteDogBreedsList, scope)
+                            favouriteDogBreedsList = favouriteDogBreedsList - state[num]
+                            Toast.makeText(
+                                ctx, "Image removed from favourites", Toast.LENGTH_SHORT
+                            ).show()
                         }
+                        dataStore.saveToSharedPrefs(favouriteDogBreedsList, scope)
                     }
                 }
             }

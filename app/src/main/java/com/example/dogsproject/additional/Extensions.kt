@@ -20,7 +20,8 @@ fun String.splitToGetBreedName(): String {
 }
 
 fun String?.intoListOfString(): List<String> {
-    return Gson().fromJson<List<String>?>(
+    return if(this == "") listOf<String>()
+    else Gson().fromJson<List<String>?>(
         this, object : TypeToken<List<String>>() {}.type
     )
 }

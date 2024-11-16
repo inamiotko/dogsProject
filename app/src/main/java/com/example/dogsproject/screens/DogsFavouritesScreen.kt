@@ -10,23 +10,24 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dogsproject.R
-import com.example.dogsproject.SaveFavDogs
-import com.example.dogsproject.additional.intoListOfString
 import com.example.dogsproject.additional.replaceDashWithSpace
 import com.example.dogsproject.additional.replaceSpaceWithDash
 import com.example.dogsproject.additional.splitToGetBreed
 import com.example.dogsproject.viewcomponents.GridItem
 import com.example.dogsproject.viewcomponents.TopBar
+import com.example.dogsproject.viewmodel.DogFavoritesViewModel
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DogsFavouritesScreen() {
-    val ctx = LocalContext.current
+fun DogsFavouritesScreen(viewModel: DogFavoritesViewModel = koinViewModel()) {
+    val dogs = viewModel.viewState.collectAsState().value.favoriteDogs
     val breedNamesList = mutableListOf<String>()
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
     var filterOn by remember { mutableStateOf(false) }
@@ -36,7 +37,6 @@ fun DogsFavouritesScreen() {
     var snackBarVisible by remember { mutableStateOf(false) }
     var favouriteDogBreedsList: List<String> = mutableListOf()
     val scope = rememberCoroutineScope()
-    val dataStore = SaveFavDogs(ctx)
     val snackBarHostState = remember { SnackbarHostState() }
     val localCoroutineScope = rememberCoroutineScope()
 
@@ -87,10 +87,8 @@ fun DogsFavouritesScreen() {
                 .fillMaxSize()
         ) {
             filterOn = false
-            val dogs = dataStore.getDogs.collectAsState(initial = "").value
 
-            if (dogs != "") {
-                favouriteDogBreedsList = dogs.intoListOfString().reversed()
+            if (dogs.isNotEmpty()) {
                 for (element in favouriteDogBreedsList) breedNamesList.add(
                     element.splitToGetBreed().replaceDashWithSpace()
                 )
@@ -122,9 +120,7 @@ fun DogsFavouritesScreen() {
                                     )]
                                 filteredImgList = filteredImgList - filteredImgList[num]
                             filteredNamesList = filteredNamesList - filteredNamesList[num]
-                            dataStore.saveToSharedPrefs(
-                                favouriteDogBreedsList.reversed(), scope
-                            )
+                            viewModel.saveToFav(favouriteDogBreedsList)
                         })
                 }
 
@@ -144,3 +140,4 @@ fun DogsFavouritesScreen() {
         }
     }
 }
+

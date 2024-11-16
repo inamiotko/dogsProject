@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -41,17 +41,16 @@ fun DogsFavouritesScreen() {
     val localCoroutineScope = rememberCoroutineScope()
 
 
-    Column(Modifier.clickable { snackBarVisible = false }) {
-        filterOn = false
-        val dogs = dataStore.getDogs.collectAsState(initial = "").value
+    Scaffold(snackbarHost = { if (snackBarVisible) SnackbarHost(snackBarHostState) }, topBar = {
         TopBar("Favourite dogs", Modifier, iconAction = {
             IconButton(onClick = {}) {
-                Icon(Icons.Filled.Favorite, "")
+                Icon(Icons.Filled.ArrowBack, "")
             }
         }) {
             IconButton(onClick = { dropDownMenuExpanded = !dropDownMenuExpanded }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_filter), contentDescription = ""
+                    painter = painterResource(id = R.drawable.ic_filter),
+                    contentDescription = ""
                 )
             }
             IconButton(onClick = {
@@ -59,7 +58,8 @@ fun DogsFavouritesScreen() {
                 filteredNamesList = breedNamesList
             }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_restart), contentDescription = ""
+                    painter = painterResource(id = R.drawable.ic_restart),
+                    contentDescription = ""
                 )
             }
             DropdownMenu(expanded = dropDownMenuExpanded,
@@ -78,36 +78,49 @@ fun DogsFavouritesScreen() {
                 }
             }
         }
-        if (dogs != "") {
-            favouriteDogBreedsList = dogs.intoListOfString().reversed()
-            for (element in favouriteDogBreedsList) breedNamesList.add(
-                element.splitToGetBreed().replaceDashWithSpace()
-            )
-            if (!filterOn && filteredImgList.isEmpty()) {
-                filteredImgList = favouriteDogBreedsList
-                filteredNamesList = breedNamesList
+    }) { scaffoldPadding ->
+
+        Column(
+            Modifier
+                .clickable { snackBarVisible = false }
+                .padding(scaffoldPadding)
+                .fillMaxSize()
+        ) {
+            filterOn = false
+            val dogs = dataStore.getDogs.collectAsState(initial = "").value
+
+            if (dogs != "") {
+                favouriteDogBreedsList = dogs.intoListOfString().reversed()
+                for (element in favouriteDogBreedsList) breedNamesList.add(
+                    element.splitToGetBreed().replaceDashWithSpace()
+                )
+                if (!filterOn && filteredImgList.isEmpty()) {
+                    filteredImgList = favouriteDogBreedsList
+                    filteredNamesList = breedNamesList
+                }
+            } else {
+                Text(
+                    "You need to pick some favourites first :)",
+                    Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
+                )
             }
-        } else {
-            Text(
-                "You need to pick some favourites first :)",
-                Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
-            )
-        }
-        LazyVerticalGrid(columns = GridCells.Fixed(3),
-            contentPadding = PaddingValues(horizontal = 5.dp, vertical = 16.dp),
-            content = {
-                items(filteredImgList.size) { num ->
-                    GridItem(breed = filteredNamesList[num],
-                        img = filteredImgList[num],
-                        iconVisible = false,
-                        onItemClickAction = {
-                            snackBarVisible = true
-                            filterOn = false
-                            if (favouriteDogBreedsList.indexOf(filteredImgList[num]) != -1) favouriteDogBreedsList =
-                                favouriteDogBreedsList - favouriteDogBreedsList[favouriteDogBreedsList.indexOf(
-                                    filteredImgList[num]
-                                )]
-                            filteredImgList = filteredImgList - filteredImgList[num]
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                contentPadding = PaddingValues(horizontal = 5.dp, vertical = 16.dp),
+                content = {
+                    items(filteredImgList.size) { num ->
+                        GridItem(
+                            breed = filteredNamesList[num],
+                            img = filteredImgList[num],
+                            iconVisible = false,
+                            onItemClickAction = {
+                                snackBarVisible = true
+                                filterOn = false
+                                if (favouriteDogBreedsList.indexOf(filteredImgList[num]) != -1) favouriteDogBreedsList =
+                                    favouriteDogBreedsList - favouriteDogBreedsList[favouriteDogBreedsList.indexOf(
+                                        filteredImgList[num]
+                                    )]
+                                filteredImgList = filteredImgList - filteredImgList[num]
                             filteredNamesList = filteredNamesList - filteredNamesList[num]
                             dataStore.saveToSharedPrefs(
                                 favouriteDogBreedsList.reversed(), scope
@@ -116,15 +129,6 @@ fun DogsFavouritesScreen() {
                 }
 
             })
-        Spacer(modifier = Modifier.weight(1f))
-        if (snackBarVisible) {
-            Scaffold(snackbarHost = { SnackbarHost(snackBarHostState) }) { scaffoldPadding ->
-                Box(
-                    modifier = Modifier
-                        .padding(scaffoldPadding)
-                        .fillMaxSize()
-                ) {}
-            }
             LaunchedEffect(Unit) {
                 localCoroutineScope.launch {
                     val result = snackBarHostState.showSnackbar(

@@ -1,9 +1,14 @@
 package com.example.dogsproject.screens
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,35 +25,38 @@ import com.example.dogsproject.viewcomponents.TopBar
 import com.example.dogsproject.viewmodel.DogListViewModel
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DogsListScreen(navController: NavController) {
     val viewModel: DogListViewModel = viewModel()
     val state by viewModel.dogStateFlow.collectAsState()
-    Column {
+    Scaffold(topBar = {
         TopBar("List of dog breeds", Modifier)
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                if (state.isEmpty()) {
-                    item {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .wrapContentSize(align = Alignment.Center)
-                        )
-                    }
-                } else {
-                    items(state.sortedBy { it }) { dog: String ->
-                        DogListItem(dog = dog, navController)
-                    }
+    }, floatingActionButton = {
+        FavouriteFloatingButton(
+            modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
+            navController = navController,
+        )
+    }) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            if (state.isEmpty()) {
+                item {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .wrapContentSize(align = Alignment.Center)
+                    )
+                }
+            } else {
+                items(state.sortedBy { it }) { dog: String ->
+                    DogListItem(dog = dog, navController)
                 }
             }
-            FavouriteFloatingButton(
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(horizontal = 24.dp, vertical = 16.dp), navController
-            )
         }
     }
 }

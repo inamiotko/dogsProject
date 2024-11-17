@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class DogFavoritesViewModel(private val dataStore: SaveDogManager) : ViewModel() {
-    private val _viewState = MutableStateFlow(DogFavoritesViewState(emptyList()))
+    private val _viewState = MutableStateFlow(DogFavoritesViewState(emptyList(), emptyList()))
     val viewState = _viewState
 
     init {
@@ -19,15 +19,20 @@ class DogFavoritesViewModel(private val dataStore: SaveDogManager) : ViewModel()
         viewModelScope.launch {
             dataStore.getDogs.collect {
                 _viewState.value =
-                    _viewState.value.copy(dogs = it.reversed())
+                    _viewState.value.copy(dogs = it.reversed(), filteredDogs = it.reversed())
             }
         }
     }
 
-    fun saveToFav(dog: Dog) {
-        viewModelScope.launch {
-            dataStore.addDog(dog)
-        }
+    fun filterByBreed(breed: String) {
+        val dogs = _viewState.value.dogs
+        _viewState.value =
+            _viewState.value.copy(filteredDogs = dogs.filter { it.breed == breed })
+    }
+
+    fun resetFiltering() {
+        _viewState.value =
+            _viewState.value.copy(filteredDogs = _viewState.value.dogs)
     }
 
     fun removeFromFav(dog: Dog) {
@@ -36,5 +41,5 @@ class DogFavoritesViewModel(private val dataStore: SaveDogManager) : ViewModel()
         }
     }
 
-    data class DogFavoritesViewState(val dogs: List<Dog>)
+    data class DogFavoritesViewState(val dogs: List<Dog>, val filteredDogs: List<Dog>)
 }

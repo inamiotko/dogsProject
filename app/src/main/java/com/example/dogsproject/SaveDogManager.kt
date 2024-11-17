@@ -55,5 +55,6 @@ class SaveDogManager(private val context: Context) {
 
 data class Dog(
     val id: Int,
-    val url: String
+    val url: String,
+    val breed: String
 )

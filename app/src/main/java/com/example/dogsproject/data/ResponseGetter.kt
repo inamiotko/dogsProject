@@ -23,11 +23,11 @@ class ResponseGetter {
         }
     }
 
-    suspend fun getDogImages(dog: String): List<Dog> = withContext(Dispatchers.IO) {
-        val response = DogImagesService.call().getImages(dog).awaitResponse()
+    suspend fun getDogImages(breed: String): List<Dog> = withContext(Dispatchers.IO) {
+        val response = DogImagesService.call().getImages(breed).awaitResponse()
         if (response.isSuccessful) {
             response.body()?.dogImages?.mapIndexed { index, imageUrl ->
-                Dog(index, imageUrl)
+                Dog(index, imageUrl, breed)
             } ?: emptyList()
         } else {
             throw Exception("Failed to fetch dog images: ${response.errorBody()?.string()}")

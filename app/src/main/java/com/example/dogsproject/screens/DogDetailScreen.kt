@@ -55,18 +55,8 @@ fun DogDetailScreen(
             items(state.dogs.size) {
                 GridItem(
                     dog = state.dogs[it].first, iconVisible = true
-                ) {
-//                    if (!favouriteDogBreedsList.contains(state[num])) {
-//                        favouriteDogBreedsList = favouriteDogBreedsList + state[num]
-//                        Toast.makeText(
-//                            ctx, "Image saved to favourites", Toast.LENGTH_SHORT
-//                        ).show()
-//                    } else {
-//                        favouriteDogBreedsList = favouriteDogBreedsList - state[num]
-//                        Toast.makeText(
-//                            ctx, "Image removed from favourites", Toast.LENGTH_SHORT
-//                        ).show()
-//                    }
+                ) { dog ->
+                    viewModel.addToFav(dog)
                 }
             }
         }

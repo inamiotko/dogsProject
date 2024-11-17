@@ -16,20 +16,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
-import com.example.dogsproject.SaveFavDogs
+import com.example.dogsproject.Dog
 
 
 @Composable
 fun GridItem(
-    breed: String,
-    img: String,
+    dog: Dog,
     iconVisible: Boolean,
-    onItemClickAction: (img: String) -> Unit
+    onItemClickAction: (dog: Dog) -> Unit
 ) {
     var isFavourite by remember { mutableStateOf(false) }
-    val ctx = LocalContext.current
-    val dataStore = SaveFavDogs(ctx)
-    isFavourite = markAsFav(img = img, dataStore = dataStore)
+    isFavourite =false
     Card(
         modifier = Modifier
             .clickable(
@@ -37,7 +34,7 @@ fun GridItem(
                 indication = rememberRipple(bounded = true, color = Color.Transparent),
                 onClick = {
                     isFavourite = !isFavourite
-                    onItemClickAction(img)
+                    onItemClickAction(dog)
                 }
             )
             .padding(8.dp)
@@ -51,7 +48,7 @@ fun GridItem(
             Image(
                 painter = rememberAsyncImagePainter(
                     model = ImageRequest.Builder(context = LocalContext.current).crossfade(true)
-                        .data(img).build()
+                        .data(dog.url).build()
                 ),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -63,17 +60,12 @@ fun GridItem(
                     .padding(8.dp), isFavourite = isFavourite
             )
         }
-        if (breed != "") {
+        if (dog.url != "") {
             Text(
-                text = breed, modifier = Modifier
+                text = dog.url, modifier = Modifier
                     .padding(8.dp),
                 color = Color.Black
             )
         }
     }
-}
-
-@Composable
-fun markAsFav(img: String, dataStore: SaveFavDogs): Boolean {
-    return (dataStore.getDogs.collectAsState(initial = "").value?.contains(img) == true)
 }

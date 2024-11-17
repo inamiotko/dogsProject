@@ -12,10 +12,10 @@ import com.example.dogsproject.screens.DogsListScreen
 fun Navigation(navController: NavHostController) {
     NavHost(navController = navController, startDestination = Screen.DogsListScreen.route) {
         composable(route = Screen.DogsListScreen.route) {
-            DogsListScreen(navController)
+            DogsListScreen(navController = navController)
         }
         composable(route = Screen.DogsDetailScreen.route.plus("/{breed}")) { backStackEntry ->
-            backStackEntry.arguments?.getString("breed")?.let { DogDetailScreen(navController, it) }
+            backStackEntry.arguments?.getString("breed")?.let { DogDetailScreen(navController = navController, breed = it) }
         }
         composable(route = Screen.DogsFavouritesScreen.route) {
             DogsFavouritesScreen()

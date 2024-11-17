@@ -11,23 +11,20 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.dogsproject.R
-import com.example.dogsproject.additional.replaceDashWithSpace
 import com.example.dogsproject.additional.replaceSpaceWithDash
 import com.example.dogsproject.additional.splitToGetBreed
 import com.example.dogsproject.viewcomponents.GridItem
 import com.example.dogsproject.viewcomponents.TopBar
 import com.example.dogsproject.viewmodel.DogFavoritesViewModel
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DogsFavouritesScreen(viewModel: DogFavoritesViewModel = koinViewModel()) {
-    val dogs = viewModel.viewState.collectAsState().value.favoriteDogs
+    val dogs = viewModel.viewState.collectAsState().value.dogs
     val breedNamesList = mutableListOf<String>()
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
     var filterOn by remember { mutableStateOf(false) }
@@ -36,9 +33,7 @@ fun DogsFavouritesScreen(viewModel: DogFavoritesViewModel = koinViewModel()) {
     var breedRemembered by remember { mutableStateOf("") }
     var snackBarVisible by remember { mutableStateOf(false) }
     var favouriteDogBreedsList: List<String> = mutableListOf()
-    val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
-    val localCoroutineScope = rememberCoroutineScope()
 
 
     Scaffold(snackbarHost = { if (snackBarVisible) SnackbarHost(snackBarHostState) }, topBar = {
@@ -79,7 +74,6 @@ fun DogsFavouritesScreen(viewModel: DogFavoritesViewModel = koinViewModel()) {
             }
         }
     }) { scaffoldPadding ->
-
         Column(
             Modifier
                 .clickable { snackBarVisible = false }
@@ -87,57 +81,43 @@ fun DogsFavouritesScreen(viewModel: DogFavoritesViewModel = koinViewModel()) {
                 .fillMaxSize()
         ) {
             filterOn = false
+            if (dogs.isNotEmpty())
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3),
+                    contentPadding = PaddingValues(horizontal = 5.dp, vertical = 16.dp),
+                    content = {
+                        items(dogs.size) { num ->
+                            GridItem(
+                                dog = dogs[num],
+                                iconVisible = false,
+                                onItemClickAction = { it ->
+                                    viewModel.removeFromFav(it)
+                                })
+                        }
 
-            if (dogs.isNotEmpty()) {
-                for (element in favouriteDogBreedsList) breedNamesList.add(
-                    element.splitToGetBreed().replaceDashWithSpace()
-                )
-                if (!filterOn && filteredImgList.isEmpty()) {
-                    filteredImgList = favouriteDogBreedsList
-                    filteredNamesList = breedNamesList
-                }
-            } else {
+                    })
+            else {
                 Text(
                     "You need to pick some favourites first :)",
                     Modifier.padding(horizontal = 16.dp, vertical = 24.dp)
                 )
             }
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                contentPadding = PaddingValues(horizontal = 5.dp, vertical = 16.dp),
-                content = {
-                    items(filteredImgList.size) { num ->
-                        GridItem(
-                            breed = filteredNamesList[num],
-                            img = filteredImgList[num],
-                            iconVisible = false,
-                            onItemClickAction = {
-                                snackBarVisible = true
-                                filterOn = false
-                                if (favouriteDogBreedsList.indexOf(filteredImgList[num]) != -1) favouriteDogBreedsList =
-                                    favouriteDogBreedsList - favouriteDogBreedsList[favouriteDogBreedsList.indexOf(
-                                        filteredImgList[num]
-                                    )]
-                                filteredImgList = filteredImgList - filteredImgList[num]
-                            filteredNamesList = filteredNamesList - filteredNamesList[num]
-                            viewModel.saveToFav(favouriteDogBreedsList)
-                        })
-                }
 
-            })
-            LaunchedEffect(Unit) {
-                localCoroutineScope.launch {
-                    val result = snackBarHostState.showSnackbar(
-                        message = "Image removed from favourites!",
-                        duration = SnackbarDuration.Short
-                    )
-                    snackBarVisible = when (result) {
-                        SnackbarResult.Dismissed -> false
-                        else -> true
-                    }
-                }
-            }
+
+//            LaunchedEffect(Unit) {
+//                localCoroutineScope.launch {
+//                    val result = snackBarHostState.showSnackbar(
+//                        message = "Image removed from favourites!",
+//                        duration = SnackbarDuration.Short
+//                    )
+//                    snackBarVisible = when (result) {
+//                        SnackbarResult.Dismissed -> false
+//                        else -> true
+//                    }
+//                }
+//            }
         }
     }
 }
+
 

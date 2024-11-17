@@ -1,63 +1,36 @@
 package com.example.dogsproject.data
 
-import android.util.Log
-import com.example.dogsproject.model.DogImages
-import com.example.dogsproject.model.Dogs
+import com.example.dogsproject.Dog
 import com.google.gson.Gson
-import kotlinx.coroutines.flow.MutableStateFlow
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.awaitResponse
 
 class ResponseGetter {
-    fun getDogBreeds(
-        dogBreeds: MutableList<String>,
-        _dogStateFlow: MutableStateFlow<List<String>>
-    ) {
-        BreedsApiService.call().getDogs().enqueue(object : Callback<Dogs> {
-            override fun onResponse(call: Call<Dogs>, response: Response<Dogs>) {
-                if (response.isSuccessful) {
-                    var map: Map<String, List<String>> = HashMap()
-                    map = Gson().fromJson(response.body()?.dogBreeds, map.javaClass)
-                    for ((k, v) in map) {
-                        if (v.isNotEmpty()) {
-                            for (subBreed in v) {
-                                dogBreeds.add("$k $subBreed")
-                            }
-                        } else {
-                            k.let { dogBreeds.add(k) }
-                        }
-                    }
-                    _dogStateFlow.value = dogBreeds
-                } else {
-                    Log.e("Http error", "${response.errorBody()}")
-                }
-            }
 
-            override fun onFailure(call: Call<Dogs>, t: Throwable) {
-                Log.e("Error", "${t.message}")
+    suspend fun getDogBreeds(): List<String> = withContext(Dispatchers.IO) {
+        val response = BreedsApiService.call().getDogs().awaitResponse()
+        if (response.isSuccessful) {
+            val mapType = object : TypeToken<Map<String, List<String>>>() {}.type
+            val map: Map<String, List<String>> =
+                Gson().fromJson(response.body()?.dogBreeds, mapType)
+            map.flatMap { (breed, subBreeds) ->
+                if (subBreeds.isNotEmpty()) subBreeds.map { "$breed $it" } else listOf(breed)
             }
-        })
+        } else {
+            throw Exception("Failed to fetch breeds: ${response.errorBody()?.string()}")
+        }
     }
 
-    fun getDogImages(dog: String, _dogStateFlow: MutableStateFlow<List<String>>) {
-        var dogBreeds: List<String> = mutableListOf()
-        DogImagesService.call().getImages(dog).enqueue(object : Callback<DogImages> {
-            override fun onResponse(
-                call: Call<DogImages>,
-                response: Response<DogImages>
-            ) {
-                if (response.isSuccessful) {
-                    dogBreeds = response.body()?.dogImages ?: emptyList<String>()
-                    _dogStateFlow.value = dogBreeds
-                } else {
-                    Log.e("Http error", "${response.errorBody()}")
-                }
-            }
-
-            override fun onFailure(call: Call<DogImages>, t: Throwable) {
-                Log.e("Error", "${t.message}")
-            }
-        })
+    suspend fun getDogImages(dog: String): List<Dog> = withContext(Dispatchers.IO) {
+        val response = DogImagesService.call().getImages(dog).awaitResponse()
+        if (response.isSuccessful) {
+            response.body()?.dogImages?.mapIndexed { index, imageUrl ->
+                Dog(index, imageUrl)
+            } ?: emptyList()
+        } else {
+            throw Exception("Failed to fetch dog images: ${response.errorBody()?.string()}")
+        }
     }
 }

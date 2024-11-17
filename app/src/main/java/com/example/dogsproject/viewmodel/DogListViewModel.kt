@@ -7,16 +7,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class DogListViewModel : ViewModel() {
+class DogListViewModel(
+    private val response: ResponseGetter
+) : ViewModel() {
+
     private val _dogStateFlow = MutableStateFlow(emptyList<String>())
     val dogStateFlow: StateFlow<List<String>>
         get() = _dogStateFlow
-    private val dogBreeds: MutableList<String> = mutableListOf()
-    private val response = ResponseGetter()
 
     init {
         viewModelScope.launch {
-            response.getDogBreeds(dogBreeds, _dogStateFlow)
+            _dogStateFlow.value = response.getDogBreeds()
         }
     }
 }

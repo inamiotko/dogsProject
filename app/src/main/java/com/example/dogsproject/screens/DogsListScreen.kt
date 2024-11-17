@@ -23,12 +23,13 @@ import com.example.dogsproject.viewcomponents.DogListItem
 import com.example.dogsproject.viewcomponents.FavouriteFloatingButton
 import com.example.dogsproject.viewcomponents.TopBar
 import com.example.dogsproject.viewmodel.DogListViewModel
+import org.koin.androidx.compose.koinViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DogsListScreen(navController: NavController) {
-    val viewModel: DogListViewModel = viewModel()
+fun DogsListScreen(viewModel: DogListViewModel = koinViewModel(), navController: NavController) {
+
     val state by viewModel.dogStateFlow.collectAsState()
     Scaffold(topBar = {
         TopBar("List of dog breeds", Modifier)

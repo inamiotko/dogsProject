@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.dogsproject.R
 import com.example.dogsproject.additional.replaceSpaceWithDash
 import com.example.dogsproject.additional.splitToGetBreed
@@ -23,7 +24,7 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DogsFavouritesScreen(viewModel: DogFavoritesViewModel = koinViewModel()) {
+fun DogsFavouritesScreen(viewModel: DogFavoritesViewModel = koinViewModel(), navController: NavController) {
     val dogs = viewModel.viewState.collectAsState().value.dogs
     val breedNamesList = mutableListOf<String>()
     var dropDownMenuExpanded by remember { mutableStateOf(false) }
@@ -32,13 +33,13 @@ fun DogsFavouritesScreen(viewModel: DogFavoritesViewModel = koinViewModel()) {
     var filteredNamesList by remember { mutableStateOf(listOf<String>()) }
     var breedRemembered by remember { mutableStateOf("") }
     var snackBarVisible by remember { mutableStateOf(false) }
-    var favouriteDogBreedsList: List<String> = mutableListOf()
+    val favouriteDogBreedsList: List<String> = mutableListOf()
     val snackBarHostState = remember { SnackbarHostState() }
 
 
     Scaffold(snackbarHost = { if (snackBarVisible) SnackbarHost(snackBarHostState) }, topBar = {
         TopBar("Favourite dogs", Modifier, iconAction = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Filled.ArrowBack, "")
             }
         }) {

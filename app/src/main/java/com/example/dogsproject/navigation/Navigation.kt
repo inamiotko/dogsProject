@@ -18,7 +18,7 @@ fun Navigation(navController: NavHostController) {
             backStackEntry.arguments?.getString("breed")?.let { DogDetailScreen(navController = navController, breed = it) }
         }
         composable(route = Screen.DogsFavouritesScreen.route) {
-            DogsFavouritesScreen()
+            DogsFavouritesScreen(navController = navController)
         }
     }
 }

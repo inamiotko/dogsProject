@@ -1,6 +1,5 @@
 package com.example.dogsproject.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
@@ -16,9 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.dogsproject.viewcomponents.FavouriteFloatingButton
 import com.example.dogsproject.viewcomponents.GridItem
@@ -29,12 +26,16 @@ import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DogDetailScreen(viewModel: DogDetailsViewModel = koinViewModel(), navController: NavController, breed: String) {
+fun DogDetailScreen(
+    viewModel: DogDetailsViewModel = koinViewModel(),
+    navController: NavController,
+    breed: String
+) {
 
     val state by viewModel.viewState.collectAsState()
     Scaffold(topBar = {
         TopBar(breed, Modifier, iconAction = {
-            IconButton(onClick = {}) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Filled.ArrowBack, "")
             }
         })
@@ -53,7 +54,7 @@ fun DogDetailScreen(viewModel: DogDetailsViewModel = koinViewModel(), navControl
         ) {
             items(state.dogs.size) {
                 GridItem(
-                    dog= state.dogs[it].first, iconVisible = true
+                    dog = state.dogs[it].first, iconVisible = true
                 ) {
 //                    if (!favouriteDogBreedsList.contains(state[num])) {
 //                        favouriteDogBreedsList = favouriteDogBreedsList + state[num]
